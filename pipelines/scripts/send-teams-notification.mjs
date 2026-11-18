@@ -27,9 +27,12 @@ const response = await fetch(webhookUrl, {
   body: JSON.stringify(payload),
 });
 
+const body = await response.text();
+console.log(
+  `Teams webhook responded: ${response.status} ${response.statusText}`,
+);
+if (body) console.log(body);
+
 if (!response.ok) {
-  console.error(
-    `Teams webhook failed: ${response.status} ${await response.text()}`,
-  );
   process.exit(1);
 }
