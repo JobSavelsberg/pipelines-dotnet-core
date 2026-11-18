@@ -20,4 +20,4 @@ stages:
         steps:
           - script: dotnet build --configuration $(buildConfiguration)
             displayName: "dotnet build $(buildConfiguration)"
-  - template: /pipelines/templates/stages/hello-world.yml
+  - template: /pipelines/templates/stages/alert-teams.yml
