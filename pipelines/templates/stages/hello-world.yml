@@ -1,8 +1,8 @@
 stages:
-  - stage: alert
-    displayName: "Alert"
+  - stage: hello
+    displayName: "Hello world"
     jobs:
-      - job: alert
+      - job: hello
         pool:
           vmImage: "ubuntu-latest"
         steps:

@@ -1,0 +1,19 @@
+stages:
+  - stage: alert
+    displayName: "Alert"
+    dependsOn: build
+    condition: succeededOrFailed()
+    jobs:
+      - job: alert
+        steps:
+          - checkout: self
+
+          - task: UseNode@1
+            inputs:
+              version: 24.x
+
+          - script: node pipelines/scripts/send-teams-notification.mjs
+            displayName: "Send Teams notification"
+            env:
+              TEAMS_WEBHOOK_URL: $(TEAMS_WEBHOOK_URL)
+              NOTIFICATION_MESSAGE: "Test alert from $(Build.DefinitionName), build $(Build.BuildNumber), result of build stage: $(Agent.JobStatus)"
