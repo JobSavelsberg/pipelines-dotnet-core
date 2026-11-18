@@ -1,9 +1,9 @@
-pool:
-  vmImage: "ubuntu-latest"
 stages:
   - stage: alert
     displayName: "Alert"
     jobs:
       - job: alert
+        pool:
+          vmImage: "ubuntu-latest"
         steps:
           - bash: echo "Hello world"
