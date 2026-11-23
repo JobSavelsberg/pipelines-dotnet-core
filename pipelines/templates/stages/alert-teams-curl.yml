@@ -1,10 +1,10 @@
 stages:
-  - stage: alert-curl
+  - stage: alert_curl
     displayName: "Alert (CURL)"
     dependsOn: build
     condition: succeededOrFailed()
     jobs:
-      - job: alert-curl
+      - job: alert_curl
         steps:
           - script: |
               curl --fail-with-body -sS -X POST "$TEAMS_WEBHOOK_URL" \
