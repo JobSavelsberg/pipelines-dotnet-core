@@ -3,10 +3,10 @@ stages:
     displayName: "Alert (Fancy)"
     dependsOn: build
     condition: succeededOrFailed()
-    variables:
-      buildResult: $[ dependencies.build.result ]
     jobs:
       - job: alert_fancy
+        variables:
+          buildResult: $[ stageDependencies.build.build.result ]
         steps:
           - checkout: self
 
