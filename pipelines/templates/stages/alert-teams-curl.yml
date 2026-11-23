@@ -6,10 +6,28 @@ stages:
     jobs:
       - job: alert_curl
         steps:
+          - checkout: none
           - script: |
-              curl --fail-with-body -sS -X POST "$TEAMS_WEBHOOK_URL" \
+              set -euo pipefail
+              PAYLOAD=$(jq -n --arg text "$NOTIFICATION_MESSAGE" '{
+                type: "message",
+                attachments: [{
+                  contentType: "application/vnd.microsoft.card.adaptive",
+                  content: {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    type: "AdaptiveCard",
+                    version: "1.4",
+                    body: [{ type: "TextBlock", text: $text, wrap: true }]
+                  }
+                }]
+              }')
+              curl -sS --fail-with-body \
+                --retry 3 --retry-delay 2 --retry-connrefused \
+                -X POST \
                 -H "Content-Type: application/json" \
-                -d "{\"text\": \"$NOTIFICATION_MESSAGE\"}"
+                -d "$PAYLOAD" \
+                -w "\nTeams webhook responded: %{http_code}\n" \
+                "$TEAMS_WEBHOOK_URL"
             displayName: "Send Teams notification"
             env:
               TEAMS_WEBHOOK_URL: $(TEAMS_WEBHOOK_URL)
