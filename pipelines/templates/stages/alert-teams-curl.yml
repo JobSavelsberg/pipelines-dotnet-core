@@ -2,9 +2,11 @@ stages:
   - stage: alert_curl
     displayName: "Alert (CURL)"
     dependsOn: build
-    condition: succeededOrFailed()
+    condition: always()
     jobs:
       - job: alert_curl
+        variables:
+          buildResult: $[ stageDependencies.build.build.result ]
         steps:
           - checkout: none
           - script: |
@@ -31,4 +33,4 @@ stages:
             displayName: "Send Teams notification"
             env:
               TEAMS_WEBHOOK_URL: $(TEAMS_WEBHOOK_URL)
-              NOTIFICATION_MESSAGE: "Test alert (CURL) from $(Build.DefinitionName), build $(Build.BuildNumber), result of build stage: $(Agent.JobStatus)"
+              NOTIFICATION_MESSAGE: "Test alert (CURL) from $(Build.DefinitionName), build $(Build.BuildNumber), result of build stage: $(buildResult)"

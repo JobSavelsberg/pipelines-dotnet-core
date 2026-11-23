@@ -2,7 +2,7 @@ stages:
   - stage: alert_fancy
     displayName: "Alert (Fancy)"
     dependsOn: build
-    condition: succeededOrFailed()
+    condition: always()
     jobs:
       - job: alert_fancy
         variables:
