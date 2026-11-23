@@ -5,7 +5,6 @@ const {
   BUILD_NUMBER,
   BRANCH,
   REQUESTED_BY,
-  REQUESTED_BY_EMAIL,
   COMMIT_MESSAGE,
   COLLECTION_URI,
   PROJECT,
@@ -21,27 +20,10 @@ const looks = {
 
 const buildUrl = `${COLLECTION_URI}${encodeURIComponent(PROJECT)}/_build/results?buildId=${BUILD_ID}`;
 
-// Mention the person who ran the build, but only if we have their email
-// and the build did not succeed. Remove the second condition to always mention.
-const shouldMention =
-  Boolean(REQUESTED_BY_EMAIL) && BUILD_RESULT !== "Succeeded";
-const mentionTag = `<at>${REQUESTED_BY}</at>`;
-
 const card = {
   type: "AdaptiveCard",
   version: "1.4",
-  msteams: {
-    width: "Full",
-    ...(shouldMention && {
-      entities: [
-        {
-          type: "mention",
-          text: mentionTag,
-          mentioned: { id: REQUESTED_BY_EMAIL, name: REQUESTED_BY },
-        },
-      ],
-    }),
-  },
+  msteams: { width: "Full" },
   body: [
     {
       type: "Container",
@@ -68,19 +50,9 @@ const card = {
       facts: [
         { title: "Build", value: BUILD_NUMBER },
         { title: "Branch", value: BRANCH },
-        // The fact value can't hold a mention, so the mention gets its own block below
         { title: "By", value: REQUESTED_BY },
       ],
     },
-    ...(shouldMention
-      ? [
-          {
-            type: "TextBlock",
-            text: `${mentionTag} your build needs attention`,
-            wrap: true,
-          },
-        ]
-      : []),
     // Collapsed until the button is clicked
     {
       type: "TextBlock",
