@@ -1,9 +1,0 @@
-stages:
-  - stage: hello
-    displayName: "Hello world"
-    jobs:
-      - job: hello
-        pool:
-          vmImage: "ubuntu-latest"
-        steps:
-          - bash: echo "Hello world"

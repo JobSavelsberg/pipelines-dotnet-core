@@ -1,0 +1,16 @@
+stages:
+  - stage: alert-curl
+    displayName: "Alert (CURL)"
+    dependsOn: build
+    condition: succeededOrFailed()
+    jobs:
+      - job: alert-curl
+        steps:
+          - script: |
+              curl --fail-with-body -sS -X POST "$TEAMS_WEBHOOK_URL" \
+                -H "Content-Type: application/json" \
+                -d "{\"text\": \"$NOTIFICATION_MESSAGE\"}"
+            displayName: "Send Teams notification"
+            env:
+              TEAMS_WEBHOOK_URL: $(TEAMS_WEBHOOK_URL)
+              NOTIFICATION_MESSAGE: "Test alert (CURL) from $(Build.DefinitionName), build $(Build.BuildNumber), result of build stage: $(Agent.JobStatus)"

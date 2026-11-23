@@ -1,0 +1,29 @@
+stages:
+  - stage: alert-fancy
+    displayName: "Alert (Fancy)"
+    dependsOn: build
+    condition: succeededOrFailed()
+    variables:
+      buildResult: $[ dependencies.build.result ]
+    jobs:
+      - job: alert-fancy
+        steps:
+          - checkout: self
+
+          - task: UseNode@1
+            inputs:
+              version: 24.x
+
+          - script: node pipelines/scripts/send-fancy-teams-notification.mjs
+            displayName: "Send Teams notification"
+            env:
+              TEAMS_WEBHOOK_URL: $(TEAMS_WEBHOOK_URL)
+              BUILD_RESULT: $(buildResult)
+              PIPELINE: $(Build.DefinitionName)
+              BUILD_NUMBER: $(Build.BuildNumber)
+              BUILD_ID: $(Build.BuildId)
+              BRANCH: $(Build.SourceBranchName)
+              REQUESTED_BY: $(Build.RequestedFor)
+              COMMIT_MESSAGE: $(Build.SourceVersionMessage)
+              COLLECTION_URI: $(System.CollectionUri)
+              PROJECT: $(System.TeamProject)
